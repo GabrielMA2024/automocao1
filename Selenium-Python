@@ -1,1 +1,29 @@
+import requests
+from bs4 import BeautifulSoup
 
+# URL escolhida pelo grupo
+url = "https://www.todamateria.com.br/fotossintese/"
+
+print("Acessando site:", url)
+response = requests.get(url)
+
+# Verifica se funcionou
+if response.status_code != 200:
+    print("Erro ao acessar o site:", response.status_code)
+    exit()
+
+soup = BeautifulSoup(response.text, "html.parser")
+
+# Exemplo de extração de texto principal
+conteudo = soup.find("article") or soup.find("div", {"class": "content"})
+
+if conteudo:
+    texto_limpo = conteudo.get_text(separator="\n", strip=True)
+    print("\n=== TEXTO EXTRAÍDO ===\n")
+    print(texto_limpo)
+
+    # salvar em arquivo
+    with open("conteudo_extraido.txt", "w", encoding="utf-8") as f:
+        f.write(texto_limpo)
+else:
+    print("Não foi possível localizar o conteúdo principal da página.")
